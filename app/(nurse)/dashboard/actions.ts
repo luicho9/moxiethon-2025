@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/style/noMagicNumbers: <explanation> */
+/** biome-ignore-all lint/style/noMagicNumbers: PIN length constants */
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -17,10 +17,6 @@ const createPatientSchema = z.object({
     .string()
     .min(3, "Username too short")
     .max(48, "Username too long"),
-  pin: z
-    .string()
-    .min(4, "PIN must be at least 4 digits")
-    .max(12, "PIN too long"),
   diseases: z.string().optional(),
   medications: z.string().optional(),
   religion: z.string().optional(),
@@ -37,7 +33,6 @@ export async function createPatientAction(
 
     const parsed = createPatientSchema.safeParse({
       username: String(formData.get("username") ?? ""),
-      pin: String(formData.get("pin") ?? ""),
       diseases: String(formData.get("diseases") ?? ""),
       medications: String(formData.get("medications") ?? ""),
       religion: String(formData.get("religion") ?? ""),
@@ -54,12 +49,17 @@ export async function createPatientAction(
       };
     }
 
-    const { username, pin } = parsed.data;
+    const { username, diseases, medications, religion, family, preferences } =
+      parsed.data;
 
-    await createPatientAccount({
+    const result = await createPatientAccount({
       username,
-      pin,
       clinicId: session.clinicId,
+      diseases,
+      medications,
+      religion,
+      family,
+      preferences,
     });
 
     revalidatePath("/dashboard");
@@ -67,7 +67,7 @@ export async function createPatientAction(
     return {
       status: "success",
       username,
-      pin,
+      pin: result.pin,
     };
   } catch {
     // Log error in production logging system

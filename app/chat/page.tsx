@@ -1,9 +1,13 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { GlobeIcon, RefreshCcwIcon, UserIcon } from "lucide-react";
+import {
+  Copy as CopyIcon,
+  GlobeIcon,
+  RefreshCcwIcon,
+  UserIcon,
+} from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
-import { CopyIcon } from "@/ai-chatbot/components/icons";
 import { Action, Actions } from "@/components/ai-elements/actions";
 import {
   Conversation,
@@ -139,7 +143,7 @@ export default function Page() {
             <div className="flex items-center gap-2">
               <UserIcon className="h-4 w-4 text-blue-600" />
               <span className="font-medium text-blue-900">
-                Chatting as: {selectedPatientData.username}
+                Paciente actual: {selectedPatientData.username}
               </span>
               {selectedPatientData.status?.lastMood && (
                 <span className="text-blue-700 text-sm">

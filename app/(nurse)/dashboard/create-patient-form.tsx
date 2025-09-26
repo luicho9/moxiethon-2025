@@ -72,20 +72,6 @@ export function CreatePatientForm() {
                 required
               />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="pin">PIN (4-12 digits)</Label>
-              <Input
-                disabled={isPending}
-                id="pin"
-                inputMode="numeric"
-                name="pin"
-                pattern="[0-9]*"
-                placeholder="1234"
-                required
-                type="password"
-              />
-            </div>
           </div>
 
           <div className="space-y-2">

@@ -11,6 +11,8 @@ import {
 } from "@/lib/db/schema";
 
 const PIN_SALT_ROUNDS = 10;
+const MIN_PIN_VALUE = 1000;
+const MAX_PIN_RANGE = 9000;
 
 function hashPin(pin: string): string {
   const pepper = process.env.CREDENTIALS_PEPPER ?? "";
@@ -47,13 +49,16 @@ export async function ensureNurseUser(): Promise<{
     return { id: nurse.id, clinicId: nurse.clinicId ?? null };
   }
   const clinicId = await ensureDefaultClinic();
+  const defaultPin = "1234";
+  const pinHashValue = hashPin(defaultPin);
+
   const [created] = await db
     .insert(user)
     .values({
       username: "enfermera1",
       role: "nurse",
       clinicId,
-      pinHash: hashPin("1234"),
+      pinHash: pinHashValue,
     })
     .returning({ id: user.id, clinicId: user.clinicId });
   return { id: created.id, clinicId: created.clinicId };
@@ -61,29 +66,70 @@ export async function ensureNurseUser(): Promise<{
 
 export async function createPatientAccount(params: {
   username: string;
-  pin: string;
   clinicId: string | null;
+  diseases?: string;
+  medications?: string;
+  religion?: string;
+  family?: string;
+  preferences?: string;
 }) {
+  // Generate a random 4-digit PIN
+  const pin = Math.floor(
+    MIN_PIN_VALUE + Math.random() * MAX_PIN_RANGE
+  ).toString();
+  const pinHashValue = hashPin(pin);
+
   const [createdUser] = await db
     .insert(user)
     .values({
       username: params.username,
       role: "patient",
       clinicId: params.clinicId ?? null,
-      pinHash: hashPin(params.pin),
+      pinHash: pinHashValue,
     })
     .returning({ id: user.id });
 
+  // Prepare profile data, converting empty strings to null
+  const profileData: {
+    userId: string;
+    clinicId: string | null;
+    diseases?: unknown;
+    medications?: unknown;
+    religion?: string | null;
+    family?: unknown;
+    preferences?: unknown;
+  } = {
+    userId: createdUser.id,
+    clinicId: params.clinicId ?? null,
+  };
+
+  // Add optional fields only if they have values
+  if (params.diseases?.trim()) {
+    profileData.diseases = params.diseases.trim();
+  }
+  if (params.medications?.trim()) {
+    profileData.medications = params.medications.trim();
+  }
+  if (params.religion?.trim()) {
+    profileData.religion = params.religion.trim();
+  }
+  if (params.family?.trim()) {
+    profileData.family = params.family.trim();
+  }
+  if (params.preferences?.trim()) {
+    profileData.preferences = params.preferences.trim();
+  }
+
   const [createdProfile] = await db
     .insert(patientProfile)
-    .values({ userId: createdUser.id, clinicId: params.clinicId ?? null })
+    .values(profileData)
     .returning({ id: patientProfile.id });
 
   await db
     .insert(patientStatus)
     .values({ patientProfileId: createdProfile.id });
 
-  return { userId: createdUser.id, patientProfileId: createdProfile.id };
+  return { userId: createdUser.id, patientProfileId: createdProfile.id, pin };
 }
 
 export type ListedPatient = {
@@ -244,4 +290,95 @@ export async function saveMessage(params: {
     })
     .returning();
   return created;
+}
+
+// Patient management functions
+export async function getUserById(userId: string) {
+  const rows = await db
+    .select({
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      clinicId: user.clinicId,
+      createdAt: user.createdAt,
+      // Profile data
+      diseases: patientProfile.diseases,
+      medications: patientProfile.medications,
+      religion: patientProfile.religion,
+      family: patientProfile.family,
+      preferences: patientProfile.preferences,
+      // Status data
+      lastMood: patientStatus.lastMood,
+      medsSignal: patientStatus.medsSignal,
+      lastActiveAt: patientStatus.lastActiveAt,
+    })
+    .from(user)
+    .leftJoin(patientProfile, eq(patientProfile.userId, user.id))
+    .leftJoin(
+      patientStatus,
+      eq(patientStatus.patientProfileId, patientProfile.id)
+    )
+    .where(eq(user.id, userId))
+    .limit(1);
+
+  return rows[0] ?? null;
+}
+
+export async function updateUserProfile(
+  userId: string,
+  profileData: {
+    name?: string;
+    diseases?: string;
+    medications?: string;
+    religion?: string;
+    family?: string;
+    preferences?: string;
+    emergencyContact?: string;
+    notes?: string;
+  }
+) {
+  // First, get the patient profile ID
+  const userWithProfile = await db
+    .select({
+      profileId: patientProfile.id,
+    })
+    .from(user)
+    .leftJoin(patientProfile, eq(patientProfile.userId, user.id))
+    .where(eq(user.id, userId))
+    .limit(1);
+
+  if (!userWithProfile[0]?.profileId) {
+    throw new Error("Patient profile not found");
+  }
+
+  // Update the profile with non-empty values
+  const updateData: Record<string, unknown> = {};
+
+  if (profileData.diseases?.trim()) {
+    updateData.diseases = profileData.diseases.trim();
+  }
+  if (profileData.medications?.trim()) {
+    updateData.medications = profileData.medications.trim();
+  }
+  if (profileData.religion?.trim()) {
+    updateData.religion = profileData.religion.trim();
+  }
+  if (profileData.family?.trim()) {
+    updateData.family = profileData.family.trim();
+  }
+  if (profileData.preferences?.trim()) {
+    updateData.preferences = profileData.preferences.trim();
+  }
+
+  if (Object.keys(updateData).length > 0) {
+    await db
+      .update(patientProfile)
+      .set(updateData)
+      .where(eq(patientProfile.id, userWithProfile[0].profileId));
+  }
+}
+
+export async function deleteUser(userId: string) {
+  // Delete the user - cascading deletes will handle profile and status
+  await db.delete(user).where(eq(user.id, userId));
 }

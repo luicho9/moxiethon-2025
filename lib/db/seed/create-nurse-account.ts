@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noConsole: <explanation> */
+/** biome-ignore-all lint/suspicious/noConsole: CLI script needs console output */
 import "dotenv/config";
 import { hashSync } from "bcrypt-ts";
 import { eq } from "drizzle-orm";

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { requireNurseSession } from "@/lib/auth";
@@ -45,9 +46,11 @@ function PatientList({ patients }: PatientListProps) {
                   )}
                 </div>
               </div>
-              <Button className="text-sm" type="button">
-                View Details
-              </Button>
+              <Link href={`/patients/${patient.userId}`}>
+                <Button className="text-sm" type="button">
+                  View Details
+                </Button>
+              </Link>
             </div>
           </div>
         ))}

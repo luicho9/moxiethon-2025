@@ -48,7 +48,6 @@ export async function POST(req: Request) {
   const modelInstance = webSearch
     ? openai("gpt-4o") // For now, we'll use gpt-4o for web search since we're removing gateway
     : (() => {
-        // Extract the model name from the format "openai/gpt-5" -> "gpt-5"
         const modelName = model.startsWith("openai/")
           ? model.split("/")[1]
           : model;
