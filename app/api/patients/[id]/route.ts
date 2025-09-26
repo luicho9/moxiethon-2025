@@ -1,6 +1,5 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { requireNurseSession } from "@/lib/auth";
 import { deleteUser, getUserById, updateUserProfile } from "@/lib/db/queries";
 
 export async function GET(
@@ -8,7 +7,6 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireNurseSession();
     const { id: patientId } = await params;
 
     // TODO: Add proper authorization check to ensure the patient belongs to the nurse's clinic
@@ -75,7 +73,6 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireNurseSession();
     const { id: patientId } = await params;
     const body = await request.json();
 
@@ -116,7 +113,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireNurseSession();
     const { id: patientId } = await params;
 
     // TODO: Add proper authorization check to ensure the patient belongs to the nurse's clinic

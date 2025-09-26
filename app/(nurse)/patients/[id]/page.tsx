@@ -165,7 +165,7 @@ export default function Page() {
   const handleDelete = async () => {
     // biome-ignore lint/suspicious/noAlert: <explanation>
     const isConfirmed = window.confirm(
-      "Are you sure you want to delete this patient? This action cannot be undone."
+      "¿Estás seguro de querer eliminar este paciente? Esta acción no puede ser deshecha."
     );
     if (!isConfirmed) {
       return;
@@ -238,7 +238,7 @@ export default function Page() {
                 variant="ghost"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Dashboard
+                Regresar
               </Button>
               <div>
                 <h1 className="font-semibold text-xl">Patient Details</h1>

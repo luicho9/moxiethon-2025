@@ -3,7 +3,6 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireNurseSession } from "@/lib/auth";
 import { createPatientAccount } from "@/lib/db/queries";
 
 export type CreatePatientActionState =
@@ -29,8 +28,6 @@ export async function createPatientAction(
   formData: FormData
 ): Promise<CreatePatientActionState> {
   try {
-    const session = await requireNurseSession();
-
     const parsed = createPatientSchema.safeParse({
       username: String(formData.get("username") ?? ""),
       diseases: String(formData.get("diseases") ?? ""),
@@ -54,7 +51,7 @@ export async function createPatientAction(
 
     const result = await createPatientAccount({
       username,
-      clinicId: session.clinicId,
+      clinicId: "d10ecc5c-17aa-492c-96b5-0e48f91b9f95",
       diseases,
       medications,
       religion,
