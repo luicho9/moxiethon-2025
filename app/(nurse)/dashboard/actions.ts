@@ -62,7 +62,7 @@ export async function createPatientAction(
       clinicId: session.clinicId,
     });
 
-    revalidatePath("/(nurse)/dashboard");
+    revalidatePath("/dashboard");
 
     return {
       status: "success",

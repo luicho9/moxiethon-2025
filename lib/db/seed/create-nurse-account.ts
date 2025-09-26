@@ -1,37 +1,68 @@
-import 'dotenv/config';
-import db from '@/lib/db';
-import { clinic, user } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { hashSync } from 'bcrypt-ts';
+/** biome-ignore-all lint/suspicious/noConsole: <explanation> */
+import "dotenv/config";
+import { hashSync } from "bcrypt-ts";
+import { eq } from "drizzle-orm";
+import db from "@/lib/db";
+import { clinic, user } from "@/lib/db/schema";
+
+const NURSE_CONFIG = {
+  clinicName: "Clinica Los Primos",
+  username: "enfermera2",
+  pin: "1234",
+};
 
 async function main() {
-  const name = 'Clinica Los Primos';
-  const username = 'enfermera1';
-  const password = 'enfermera1234';
-  const pepper = process.env.CREDENTIALS_PEPPER ?? '';
+  const { clinicName, username, pin } = NURSE_CONFIG;
+  const pepper = process.env.CREDENTIALS_PEPPER ?? "";
 
-  const [existingClinic] = await db.select().from(clinic).where(eq(clinic.name, name)).limit(1);
-  const clinicId = existingClinic?.id ??
-    (await db.insert(clinic).values({ name }).returning({ id: clinic.id }))[0].id;
+  console.log(`Creating nurse: ${username} with PIN: ${pin}`);
 
-  const [existing] = await db.select().from(user).where(eq(user.username, username)).limit(1);
+  const [existingClinic] = await db
+    .select()
+    .from(clinic)
+    .where(eq(clinic.name, clinicName))
+    .limit(1);
+  const clinicId =
+    existingClinic?.id ??
+    (
+      await db
+        .insert(clinic)
+        .values({ name: clinicName })
+        .returning({ id: clinic.id })
+    )[0].id;
+
+  console.log(`Using clinic: ${clinicName} (ID: ${clinicId})`);
+
+  const [existing] = await db
+    .select()
+    .from(user)
+    .where(eq(user.username, username))
+    .limit(1);
   if (existing) {
-    console.log('Nurse exists:', existing.username);
+    console.log(`Nurse already exists: ${existing.username}`);
+    console.log("To create a new nurse, change the username in NURSE_CONFIG");
     return;
   }
 
-  const passwordHash = hashSync(password + pepper, 10);
+  const pinHash = hashSync(pin + pepper, 10);
   await db.insert(user).values({
     username,
-    role: 'nurse',
+    role: "nurse",
     clinicId,
-    passwordHash,
+    pinHash,
   });
 
-  console.log('Nurse created. Username:', username, 'Password:', password);
+  console.log("Nurse created successfully!");
+  console.log(`Username: ${username}`);
+  console.log(`PIN: ${pin}`);
+  console.log(`Clinic: ${clinicName}`);
+  console.log("");
+  console.log("The nurse can now login at /login with these credentials.");
 }
 
-main().then(() => process.exit(0)).catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

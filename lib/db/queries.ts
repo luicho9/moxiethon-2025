@@ -1,7 +1,14 @@
 import { hashSync } from "bcrypt-ts";
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import db from "@/lib/db";
-import { clinic, patientProfile, patientStatus, user } from "@/lib/db/schema";
+import {
+  chat,
+  clinic,
+  message,
+  patientProfile,
+  patientStatus,
+  user,
+} from "@/lib/db/schema";
 
 const PIN_SALT_ROUNDS = 10;
 
@@ -112,4 +119,55 @@ export async function listPatientsForClinic(
     );
 
   return rows as ListedPatient[];
+}
+
+// Chat-related functions
+export async function getChatById(id: string) {
+  const rows = await db.select().from(chat).where(eq(chat.id, id)).limit(1);
+  return rows[0] ?? null;
+}
+
+export async function createChat(params: {
+  id: string;
+  userId: string;
+  title: string;
+}) {
+  const [created] = await db
+    .insert(chat)
+    .values({
+      id: params.id,
+      userId: params.userId,
+      title: params.title,
+    })
+    .returning();
+  return created;
+}
+
+export async function getMessagesByChatId(chatId: string) {
+  const rows = await db
+    .select()
+    .from(message)
+    .where(eq(message.chatId, chatId))
+    .orderBy(asc(message.createdAt));
+  return rows;
+}
+
+export async function saveMessage(params: {
+  id: string;
+  chatId: string;
+  role: string;
+  parts: { type: string; text: string }[];
+  attachments: { type: string; url: string }[];
+}) {
+  const [created] = await db
+    .insert(message)
+    .values({
+      id: params.id,
+      chatId: params.chatId,
+      role: params.role,
+      parts: params.parts,
+      attachments: params.attachments,
+    })
+    .returning();
+  return created;
 }

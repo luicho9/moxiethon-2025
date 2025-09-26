@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
 import { requireNurseSession } from "@/lib/auth";
 import { type ListedPatient, listPatientsForClinic } from "@/lib/db/queries";
 import { CreatePatientForm } from "./create-patient-form";
@@ -44,12 +45,12 @@ function PatientList({ patients }: PatientListProps) {
                   )}
                 </div>
               </div>
-              <button
+              <Button
                 className="text-blue-600 text-sm hover:text-blue-800"
                 type="button"
               >
                 View Details
-              </button>
+              </Button>
             </div>
           </div>
         ))}
