@@ -49,6 +49,7 @@ import {
   SourcesContent,
   SourcesTrigger,
 } from "@/components/ai-elements/sources";
+import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 
 const models = [
   {
@@ -87,6 +88,14 @@ export default function Page() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoadingPatients, setIsLoadingPatients] = useState(true);
   const { messages, sendMessage, status, regenerate } = useChat();
+
+  // Default suggestions for the chat
+  const defaultSuggestions = [
+    "Recordemos una de mis memorias",
+    "Juguemos un juego mental",
+    "¿Qué medicamentos debo tomar?",
+    "¿Cómo esta el clima el día de hoy?",
+  ];
 
   // Fetch patients on component mount
   useEffect(() => {
@@ -134,6 +143,21 @@ export default function Page() {
   const selectedPatientData = patients.find(
     (p) => p.userId === selectedPatient
   );
+
+  const handleSuggestionClick = (suggestion: string) => {
+    sendMessage(
+      {
+        text: suggestion,
+      },
+      {
+        body: {
+          model,
+          webSearch,
+          patientId: selectedPatient,
+        },
+      }
+    );
+  };
 
   return (
     <div className="relative mx-auto size-full h-screen max-w-4xl p-6">
@@ -237,6 +261,20 @@ export default function Page() {
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
+
+        {messages.length === 0 && (
+          <div className="mb-4">
+            <Suggestions className="justify-center">
+              {defaultSuggestions.map((suggestion) => (
+                <Suggestion
+                  key={suggestion}
+                  onClick={handleSuggestionClick}
+                  suggestion={suggestion}
+                />
+              ))}
+            </Suggestions>
+          </div>
+        )}
 
         <PromptInput
           className="mt-4"
