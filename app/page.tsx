@@ -1,235 +1,71 @@
-"use client";
-
-import { useChat } from "@ai-sdk/react";
-import { GlobeIcon, RefreshCcwIcon } from "lucide-react";
-import { Fragment, useState } from "react";
-import { CopyIcon } from "@/ai-chatbot/components/icons";
-import { Action, Actions } from "@/components/ai-elements/actions";
-import {
-  Conversation,
-  ConversationContent,
-  ConversationScrollButton,
-} from "@/components/ai-elements/conversation";
-import { Loader } from "@/components/ai-elements/loader";
-import { Message, MessageContent } from "@/components/ai-elements/message";
-import {
-  PromptInput,
-  PromptInputActionAddAttachments,
-  PromptInputActionMenu,
-  PromptInputActionMenuContent,
-  PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
-  PromptInputBody,
-  PromptInputButton,
-  type PromptInputMessage,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
-  PromptInputSubmit,
-  PromptInputTextarea,
-  PromptInputToolbar,
-  PromptInputTools,
-} from "@/components/ai-elements/prompt-input";
-import {
-  Reasoning,
-  ReasoningContent,
-  ReasoningTrigger,
-} from "@/components/ai-elements/reasoning";
-import { Response } from "@/components/ai-elements/response";
-import {
-  Source,
-  Sources,
-  SourcesContent,
-  SourcesTrigger,
-} from "@/components/ai-elements/sources";
-
-const models = [
-  {
-    name: "GPT 4o",
-    value: "openai/gpt-4o",
-  },
-  {
-    name: "Deepseek R1",
-    value: "deepseek/deepseek-r1",
-  },
-];
+import { UserCheck, Users } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export default function Page() {
-  const [input, setInput] = useState("");
-  const [model, setModel] = useState<string>(models[0].value);
-  const [webSearch, setWebSearch] = useState(false);
-  const { messages, sendMessage, status, regenerate } = useChat();
-
-  const handleSubmit = (message: PromptInputMessage) => {
-    const hasText = Boolean(message.text);
-    const hasAttachments = Boolean(message.files?.length);
-
-    if (!(hasText || hasAttachments)) {
-      return;
-    }
-
-    sendMessage(
-      {
-        text: message.text || "Sent with attachments",
-        files: message.files,
-      },
-      {
-        body: {
-          model,
-          webSearch,
-        },
-      }
-    );
-    setInput("");
-  };
-
   return (
-    <div className="relative mx-auto size-full h-screen max-w-4xl p-6">
-      <div className="flex h-full flex-col">
-        <Conversation className="h-full">
-          <ConversationContent>
-            {messages.map((message) => (
-              <div key={message.id}>
-                {message.role === "assistant" &&
-                  message.parts.filter((part) => part.type === "source-url")
-                    .length > 0 && (
-                    <Sources>
-                      <SourcesTrigger
-                        count={
-                          message.parts.filter(
-                            (part) => part.type === "source-url"
-                          ).length
-                        }
-                      />
-                      {message.parts
-                        .filter((part) => part.type === "source-url")
-                        .map((part, i) => (
-                          <SourcesContent key={`${message.id}-${i}`}>
-                            <Source
-                              href={part.url}
-                              key={`${message.id}-${i}`}
-                              title={part.url}
-                            />
-                          </SourcesContent>
-                        ))}
-                    </Sources>
-                  )}
-                {message.parts.map((part, i) => {
-                  switch (part.type) {
-                    case "text":
-                      return (
-                        <Fragment key={`${message.id}-${i}`}>
-                          <Message from={message.role}>
-                            <MessageContent>
-                              <Response>{part.text}</Response>
-                            </MessageContent>
-                          </Message>
-                          {message.role === "assistant" &&
-                            i === messages.length - 1 && (
-                              <Actions className="mt-2">
-                                <Action
-                                  label="Retry"
-                                  onClick={() => regenerate()}
-                                >
-                                  <RefreshCcwIcon size={16} />
-                                </Action>
-                                <Action
-                                  label="Copy"
-                                  onClick={() =>
-                                    navigator.clipboard.writeText(part.text)
-                                  }
-                                >
-                                  <CopyIcon size={16} />
-                                </Action>
-                              </Actions>
-                            )}
-                        </Fragment>
-                      );
-                    case "reasoning":
-                      return (
-                        <Reasoning
-                          className="w-full"
-                          isStreaming={
-                            status === "streaming" &&
-                            i === message.parts.length - 1 &&
-                            message.id === messages.at(-1)?.id
-                          }
-                          key={`${message.id}-${i}`}
-                        >
-                          <ReasoningTrigger />
-                          <ReasoningContent>{part.text}</ReasoningContent>
-                        </Reasoning>
-                      );
-                    default:
-                      return null;
-                  }
-                })}
-              </div>
-            ))}
-            {status === "submitted" && <Loader />}
-          </ConversationContent>
-          <ConversationScrollButton />
-        </Conversation>
+    <main className="flex min-h-screen items-center justify-center bg-background p-4">
+      <div className="mx-auto w-full max-w-2xl">
+        <div className="mb-12 text-center">
+          <h1 className="mb-4 text-balance font-bold text-4xl text-foreground md:text-5xl">
+            Selecciona tu rol
+          </h1>
+          <p className="text-pretty text-lg text-muted-foreground">
+            Elige tu perfil para acceder al sistema de gestión médica
+          </p>
+        </div>
 
-        <PromptInput
-          className="mt-4"
-          globalDrop
-          multiple
-          onSubmit={handleSubmit}
-        >
-          <PromptInputBody>
-            <PromptInputAttachments>
-              {(attachment) => <PromptInputAttachment data={attachment} />}
-            </PromptInputAttachments>
-            <PromptInputTextarea
-              onChange={(e) => setInput(e.target.value)}
-              value={input}
-            />
-          </PromptInputBody>
-          <PromptInputToolbar>
-            <PromptInputTools>
-              <PromptInputActionMenu>
-                <PromptInputActionMenuTrigger />
-                <PromptInputActionMenuContent>
-                  <PromptInputActionAddAttachments />
-                </PromptInputActionMenuContent>
-              </PromptInputActionMenu>
-              <PromptInputButton
-                onClick={() => setWebSearch(!webSearch)}
-                variant={webSearch ? "default" : "ghost"}
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card className="group border-2 transition-all duration-300 hover:scale-[1.02] hover:border-primary/20 hover:shadow-lg">
+            <Link className="block p-8 text-center" href="/dashboard">
+              <div className="mb-6">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
+                  <UserCheck className="h-8 w-8 text-primary" />
+                </div>
+              </div>
+              <h2 className="mb-3 font-semibold text-2xl text-foreground">
+                Enfermera
+              </h2>
+              <p className="mb-6 text-pretty text-muted-foreground">
+                Accede al panel de administración y gestión de pacientes
+              </p>
+              <Button className="w-full py-6 font-medium text-lg" size="lg">
+                Continuar como Enfermera
+              </Button>
+            </Link>
+          </Card>
+
+          <Card className="group border-2 transition-all duration-300 hover:scale-[1.02] hover:border-primary/20 hover:shadow-lg">
+            <Link className="block p-8 text-center" href="/chat">
+              <div className="mb-6">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
+                  <Users className="h-8 w-8 text-primary" />
+                </div>
+              </div>
+              <h2 className="mb-3 font-semibold text-2xl text-foreground">
+                Paciente
+              </h2>
+              <p className="mb-6 text-pretty text-muted-foreground">
+                Accede al chat de consulta y comunicación médica
+              </p>
+              <Button
+                className="w-full border-2 bg-transparent py-6 font-medium text-lg hover:bg-primary hover:text-primary-foreground"
+                size="lg"
+                variant="outline"
               >
-                <GlobeIcon size={16} />
-                <span>Search</span>
-              </PromptInputButton>
-              <PromptInputModelSelect
-                onValueChange={(value) => {
-                  setModel(value);
-                }}
-                value={model}
-              >
-                <PromptInputModelSelectTrigger>
-                  <PromptInputModelSelectValue />
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent>
-                  {/** biome-ignore lint/nursery/noShadow: <explanation> */}
-                  {models.map((model) => (
-                    <PromptInputModelSelectItem
-                      key={model.value}
-                      value={model.value}
-                    >
-                      {model.name}
-                    </PromptInputModelSelectItem>
-                  ))}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
-            </PromptInputTools>
-            <PromptInputSubmit disabled={!(input || status)} status={status} />
-          </PromptInputToolbar>
-        </PromptInput>
+                Continuar como Paciente
+              </Button>
+            </Link>
+          </Card>
+        </div>
+
+        <div className="mt-8 text-center">
+          <p className="text-muted-foreground text-sm">
+            Sistema seguro de gestión médica • Datos protegidos
+          </p>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

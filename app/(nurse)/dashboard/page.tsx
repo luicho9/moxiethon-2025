@@ -12,7 +12,7 @@ function PatientList({ patients }: PatientListProps) {
   if (patients.length === 0) {
     return (
       <div className="py-8 text-center text-gray-500">
-        No patients found. Create your first patient above.
+        No se encontraron pacientes. Cree su primer paciente arriba.
       </div>
     );
   }
@@ -45,10 +45,7 @@ function PatientList({ patients }: PatientListProps) {
                   )}
                 </div>
               </div>
-              <Button
-                className="text-blue-600 text-sm hover:text-blue-800"
-                type="button"
-              >
+              <Button className="text-sm" type="button">
                 View Details
               </Button>
             </div>

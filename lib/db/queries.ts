@@ -121,6 +121,80 @@ export async function listPatientsForClinic(
   return rows as ListedPatient[];
 }
 
+export type PatientForSelector = {
+  userId: string;
+  username: string;
+  profile: {
+    diseases: unknown;
+    medications: unknown;
+    religion: string | null;
+    family: unknown;
+    preferences: unknown;
+  } | null;
+  status: {
+    lastMood: string | null;
+    medsSignal: "took" | "skipped" | "unknown";
+    concerns: unknown;
+    dailySummary: string | null;
+  } | null;
+};
+
+export async function getPatientsForSelector(
+  clinicId: string | null
+): Promise<PatientForSelector[]> {
+  const rows = await db
+    .select({
+      userId: user.id,
+      username: user.username,
+      diseases: patientProfile.diseases,
+      medications: patientProfile.medications,
+      religion: patientProfile.religion,
+      family: patientProfile.family,
+      preferences: patientProfile.preferences,
+      lastMood: patientStatus.lastMood,
+      medsSignal: patientStatus.medsSignal,
+      concerns: patientStatus.concerns,
+      dailySummary: patientStatus.dailySummary,
+    })
+    .from(user)
+    .leftJoin(patientProfile, eq(patientProfile.userId, user.id))
+    .leftJoin(
+      patientStatus,
+      eq(patientStatus.patientProfileId, patientProfile.id)
+    )
+    .where(
+      and(
+        eq(user.role, "patient"),
+        clinicId ? eq(user.clinicId, clinicId) : (undefined as never)
+      )
+    );
+
+  return rows.map((row) => ({
+    userId: row.userId,
+    username: row.username,
+    profile:
+      row.diseases ||
+      row.medications ||
+      row.religion ||
+      row.family ||
+      row.preferences
+        ? {
+            diseases: row.diseases,
+            medications: row.medications,
+            religion: row.religion,
+            family: row.family,
+            preferences: row.preferences,
+          }
+        : null,
+    status: {
+      lastMood: row.lastMood,
+      medsSignal: row.medsSignal ?? "unknown",
+      concerns: row.concerns,
+      dailySummary: row.dailySummary,
+    },
+  }));
+}
+
 // Chat-related functions
 export async function getChatById(id: string) {
   const rows = await db.select().from(chat).where(eq(chat.id, id)).limit(1);
