@@ -1,9 +1,12 @@
 import { openai } from "@ai-sdk/openai";
+import { geolocation } from "@vercel/functions";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import {
   generatePatientSystemPrompt,
   getDefaultSystemPrompt,
-} from "@/lib/ai/system-prompts";
+  type RequestHints,
+} from "@/lib/ai/prompts";
+import { getWeather } from "@/lib/ai/tools/get-weather";
 import { ensureDefaultClinic, getPatientsForSelector } from "@/lib/db/queries";
 
 // Allow streaming responses up to 60 seconds
@@ -22,8 +25,17 @@ export async function POST(req: Request) {
     patientId?: string;
   } = await req.json();
 
-  let systemPrompt = getDefaultSystemPrompt();
+  // Get user's location
+  const { longitude, latitude, city, country } = geolocation(req);
 
+  const requestHints: RequestHints = {
+    longitude,
+    latitude,
+    city,
+    country,
+  };
+
+  let systemPrompt = getDefaultSystemPrompt(requestHints);
   // If a patient is selected, get their specific system prompt
   if (patientId) {
     try {
@@ -32,7 +44,10 @@ export async function POST(req: Request) {
       const selectedPatient = patients.find((p) => p.userId === patientId);
 
       if (selectedPatient) {
-        systemPrompt = generatePatientSystemPrompt(selectedPatient);
+        systemPrompt = generatePatientSystemPrompt(
+          selectedPatient,
+          requestHints
+        );
       }
     } catch (error) {
       // Log error for debugging in development
@@ -58,6 +73,9 @@ export async function POST(req: Request) {
     model: modelInstance,
     messages: convertToModelMessages(messages),
     system: systemPrompt,
+    tools: {
+      getWeather,
+    },
   });
 
   // send sources and reasoning back to the client
