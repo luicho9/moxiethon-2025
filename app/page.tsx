@@ -1,4 +1,5 @@
 import { UserCheck, Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -7,7 +8,22 @@ export default function Page() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="mx-auto w-full max-w-2xl">
-        <div className="mb-12 text-center">
+        <div className="mb-8 text-center">
+          <div className="mb-8 flex justify-center">
+            <div className="group relative">
+              <div className="-inset-4 absolute animate-pulse rounded-full bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 opacity-0 blur-xl transition-all duration-700 group-hover:opacity-100" />
+              <div className="relative">
+                <Image
+                  alt="Moxie Logo"
+                  className="mx-auto drop-shadow-lg transition-all duration-500 group-hover:rotate-3 group-hover:scale-110"
+                  height={120}
+                  priority
+                  src="/moxie-logo.png"
+                  width={120}
+                />
+              </div>
+            </div>
+          </div>
           <h1 className="mb-4 text-balance font-bold text-4xl text-foreground md:text-5xl">
             Selecciona tu rol
           </h1>

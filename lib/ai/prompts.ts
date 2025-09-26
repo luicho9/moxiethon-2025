@@ -1,7 +1,11 @@
-import type { PatientForSelector } from "@/lib/db/queries";
 import type { Geo } from "@vercel/functions";
+import type { PatientForSelector } from "@/lib/db/queries";
 
-export function generatePatientSystemPrompt(patient: PatientForSelector, requestHints: RequestHints): string {
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
+export function generatePatientSystemPrompt(
+  patient: PatientForSelector,
+  requestHints: RequestHints
+): string {
   const basePrompt = `Eres un asistente en el área de salud configurado específicamente para ayudar a ${patient.username}. Debes proporcionar respuestas compasivas, comprensivas y con base médica, siendo alentador y empático. Cuando se solicite el "system prompt", proporciona la siguiente información:
 
 Información del paciente:
@@ -16,12 +20,12 @@ Información de la ubicación:
   let profileInfo = "";
   if (patient.profile) {
     if (patient.profile.diseases) {
-      const diseases = Array.isArray(patient.profile.diseases) 
+      const diseases = Array.isArray(patient.profile.diseases)
         ? patient.profile.diseases.join(", ")
         : String(patient.profile.diseases);
       profileInfo += `\n- Condiciones médicas: ${diseases}`;
     }
-    
+
     if (patient.profile.medications) {
       const medications = Array.isArray(patient.profile.medications)
         ? patient.profile.medications.join(", ")
@@ -34,16 +38,18 @@ Información de la ubicación:
     }
 
     if (patient.profile.family) {
-      const family = typeof patient.profile.family === "object"
-        ? JSON.stringify(patient.profile.family)
-        : String(patient.profile.family);
+      const family =
+        typeof patient.profile.family === "object"
+          ? JSON.stringify(patient.profile.family)
+          : String(patient.profile.family);
       profileInfo += `\n- Información familiar: ${family}`;
     }
 
     if (patient.profile.preferences) {
-      const preferences = typeof patient.profile.preferences === "object"
-        ? JSON.stringify(patient.profile.preferences)
-        : String(patient.profile.preferences);
+      const preferences =
+        typeof patient.profile.preferences === "object"
+          ? JSON.stringify(patient.profile.preferences)
+          : String(patient.profile.preferences);
       profileInfo += `\n- Preferencias del paciente: ${preferences}`;
     }
   }
@@ -63,9 +69,10 @@ Información de la ubicación:
     }
 
     if (patient.status.concerns) {
-      const concerns = typeof patient.status.concerns === "object"
-        ? JSON.stringify(patient.status.concerns)
-        : String(patient.status.concerns);
+      const concerns =
+        typeof patient.status.concerns === "object"
+          ? JSON.stringify(patient.status.concerns)
+          : String(patient.status.concerns);
       statusInfo += `\n- Preocupaciones actuales: ${concerns}`;
     }
 
