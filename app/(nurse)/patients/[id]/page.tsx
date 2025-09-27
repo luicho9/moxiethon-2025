@@ -51,7 +51,7 @@ type ChatMessage = {
   type: "patient" | "system";
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex patient management component with multiple states
 export default function Page() {
   const [patient, setPatient] = useState<PatientProfile | null>(null);
   const [formData, setFormData] = useState<Partial<PatientProfile>>({});
@@ -155,7 +155,7 @@ export default function Page() {
       }
 
       setSuccess("Patient profile updated successfully");
-      // biome-ignore lint/style/noMagicNumbers: <explanation>
+      // biome-ignore lint/style/noMagicNumbers: 3 second timeout for success message
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update patient");
@@ -165,7 +165,7 @@ export default function Page() {
   };
 
   const handleDelete = async () => {
-    // biome-ignore lint/suspicious/noAlert: <explanation>
+    // biome-ignore lint/suspicious/noAlert: User confirmation required for destructive action
     const isConfirmed = window.confirm(
       "¿Estás seguro de querer eliminar este paciente? Esta acción no puede ser deshecha."
     );
@@ -233,9 +233,7 @@ export default function Page() {
               </Button>
               <div>
                 <h1 className="font-semibold text-xl">Detalles del paciente</h1>
-                <p className="text-muted-foreground text-sm">
-                  {patient.name} (@{patient.username})
-                </p>
+                <p className="text-muted-foreground text-sm">{patient.name}</p>
               </div>
             </div>
 
@@ -250,7 +248,7 @@ export default function Page() {
                   className={
                     patient.mood === "good"
                       ? "bg-green-100 text-green-800"
-                      : // biome-ignore lint/style/noNestedTernary: <explanation>
+                      : // biome-ignore lint/style/noNestedTernary: Three distinct mood states require nested ternary
                         patient.mood === "concerning"
                         ? "bg-red-100 text-red-800"
                         : "bg-yellow-100 text-yellow-800"
@@ -271,22 +269,22 @@ export default function Page() {
           onValueChange={setActiveTab}
           value={activeTab}
         >
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
             <TabsTrigger value="overview">
               <User className="mr-2 h-4 w-4" />
-              Resumen
+              <span className="hidden sm:inline">Resumen</span>
             </TabsTrigger>
             <TabsTrigger value="edit">
               <Save className="mr-2 h-4 w-4" />
-              Editar perfil
+              <span className="hidden sm:inline">Editar perfil</span>
             </TabsTrigger>
             <TabsTrigger value="chat">
               <MessageCircle className="mr-2 h-4 w-4" />
-              Historial de chat
+              <span className="hidden sm:inline">Historial de chat</span>
             </TabsTrigger>
             <TabsTrigger value="activity">
               <Activity className="mr-2 h-4 w-4" />
-              Actividad
+              <span className="hidden sm:inline">Actividad</span>
             </TabsTrigger>
           </TabsList>
 
