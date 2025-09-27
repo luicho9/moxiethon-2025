@@ -101,3 +101,7 @@ Esto significa:
 ## URL de la presentación
 
 [https://presentacion-moxiethon-2025.vercel.app/](https://presentacion-moxiethon-2025.vercel.app/)
+
+## URL del repositorio del Análisis con Machine Learning
+
+[https://github.com/sabbatismus33/Moxiethon-ML-Demo](https://github.com/sabbatismus33/Moxiethon-ML-Demo)
