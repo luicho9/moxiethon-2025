@@ -12,7 +12,10 @@ export const Suggestions = ({
   ...props
 }: SuggestionsProps) => (
   <div
-    className={cn("mx-auto grid max-w-2xl grid-cols-2 gap-2", className)}
+    className={cn(
+      "mx-auto grid max-w-4xl grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3",
+      className
+    )}
     {...props}
   >
     {children}
@@ -39,7 +42,10 @@ export const Suggestion = ({
 
   return (
     <Button
-      className={cn("cursor-pointer rounded-full px-4", className)}
+      className={cn(
+        "cursor-pointer rounded-full px-3 py-2 text-center text-sm sm:px-4",
+        className
+      )}
       onClick={handleClick}
       size={size}
       type="button"

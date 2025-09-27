@@ -109,12 +109,8 @@
           "name": "patient_profile_user_id_user_id_fk",
           "tableFrom": "patient_profile",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -122,12 +118,8 @@
           "name": "patient_profile_clinic_id_clinic_id_fk",
           "tableFrom": "patient_profile",
           "tableTo": "clinic",
-          "columnsFrom": [
-            "clinic_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["clinic_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -176,12 +168,8 @@
           "name": "chat_user_id_user_id_fk",
           "tableFrom": "chat",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -298,12 +286,8 @@
           "name": "message_chat_id_chat_id_fk",
           "tableFrom": "message",
           "tableTo": "chat",
-          "columnsFrom": [
-            "chat_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["chat_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -405,12 +389,8 @@
           "name": "patient_status_patient_profile_id_patient_profile_id_fk",
           "tableFrom": "patient_status",
           "tableTo": "patient_profile",
-          "columnsFrom": [
-            "patient_profile_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["patient_profile_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -509,12 +489,8 @@
           "name": "user_clinic_id_clinic_id_fk",
           "tableFrom": "user",
           "tableTo": "clinic",
-          "columnsFrom": [
-            "clinic_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["clinic_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -524,9 +500,7 @@
         "user_username_unique": {
           "name": "user_username_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         }
       },
       "policies": {},
@@ -538,19 +512,12 @@
     "public.meds_signal": {
       "name": "meds_signal",
       "schema": "public",
-      "values": [
-        "took",
-        "skipped",
-        "unknown"
-      ]
+      "values": ["took", "skipped", "unknown"]
     },
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": [
-        "nurse",
-        "patient"
-      ]
+      "values": ["nurse", "patient"]
     }
   },
   "schemas": {},

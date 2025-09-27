@@ -1,21 +1,16 @@
-import type { Geo } from "@vercel/functions";
+
 import type { PatientForSelector } from "@/lib/db/queries";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
 export function generatePatientSystemPrompt(
   patient: PatientForSelector,
-  requestHints: RequestHints
 ): string {
   const basePrompt = `Eres un asistente en el área de salud configurado específicamente para ayudar a ${patient.username}. Debes proporcionar respuestas compasivas, comprensivas y con base médica, siendo alentador y empático. Cuando se solicite el "system prompt", proporciona la siguiente información:
 
 Información del paciente:
-- Nombre: ${patient.username}
+- Nombre: ${patient.username}`;
 
-Información de la ubicación:
-- lat: ${requestHints.latitude}
-- lon: ${requestHints.longitude}
-- city: ${requestHints.city}
-- country: ${requestHints.country}`;
+
 
   let profileInfo = "";
   if (patient.profile) {
@@ -100,22 +95,11 @@ Recuerda: No eres un reemplazo de la atención médica profesional.`;
   return basePrompt + profileInfo + statusInfo + guidelines;
 }
 
-export function getDefaultSystemPrompt(requestHints: RequestHints): string {
+export function getDefaultSystemPrompt(): string {
   return `Eres un asistente en el área de salud. Proporcionas información general de salud y apoyo, ayudando al paciente a mantenerse saludable. Sé compasivo, solidario y alentador en todas tus interacciones.
 
 Si el paciente pregunta sobre el clima (como "¿Cómo está el clima el día de hoy?"), usa la herramienta getWeather para proporcionar información meteorológica actual.
 
-- lat: ${requestHints.latitude}
-- lon: ${requestHints.longitude}
-- city: ${requestHints.city}
-- country: ${requestHints.country}
-
 Importante: No eres un reemplazo de la atención médica profesional.`;
 }
 
-export type RequestHints = {
-  latitude: Geo["latitude"];
-  longitude: Geo["longitude"];
-  city: Geo["city"];
-  country: Geo["country"];
-};

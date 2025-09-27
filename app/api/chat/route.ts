@@ -1,11 +1,10 @@
 import { openai } from "@ai-sdk/openai";
-import { geolocation } from "@vercel/functions";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import {
   generatePatientSystemPrompt,
   getDefaultSystemPrompt,
-  type RequestHints,
 } from "@/lib/ai/prompts";
+import { geocodeLocation } from "@/lib/ai/tools/geocode-location";
 import { getWeather } from "@/lib/ai/tools/get-weather";
 import { ensureDefaultClinic, getPatientsForSelector } from "@/lib/db/queries";
 
@@ -16,26 +15,14 @@ export async function POST(req: Request) {
   const {
     messages,
     model,
-    webSearch,
     patientId,
   }: {
     messages: UIMessage[];
     model: string;
-    webSearch: boolean;
     patientId?: string;
   } = await req.json();
 
-  // Get user's location
-  const { longitude, latitude, city, country } = geolocation(req);
-
-  const requestHints: RequestHints = {
-    longitude,
-    latitude,
-    city,
-    country,
-  };
-
-  let systemPrompt = getDefaultSystemPrompt(requestHints);
+  let systemPrompt = getDefaultSystemPrompt();
   // If a patient is selected, get their specific system prompt
   if (patientId) {
     try {
@@ -44,10 +31,7 @@ export async function POST(req: Request) {
       const selectedPatient = patients.find((p) => p.userId === patientId);
 
       if (selectedPatient) {
-        systemPrompt = generatePatientSystemPrompt(
-          selectedPatient,
-          requestHints
-        );
+        systemPrompt = generatePatientSystemPrompt(selectedPatient);
       }
     } catch (error) {
       // Log error for debugging in development
@@ -60,14 +44,10 @@ export async function POST(req: Request) {
   }
 
   // Create the appropriate model instance
-  const modelInstance = webSearch
-    ? openai("gpt-4o") // For now, we'll use gpt-4o for web search since we're removing gateway
-    : (() => {
-        const modelName = model.startsWith("openai/")
-          ? model.split("/")[1]
-          : model;
-        return openai(modelName);
-      })();
+  const modelInstance = (() => {
+    const modelName = model.startsWith("openai/") ? model.split("/")[1] : model;
+    return openai(modelName);
+  })();
 
   const result = streamText({
     model: modelInstance,
@@ -75,12 +55,12 @@ export async function POST(req: Request) {
     system: systemPrompt,
     tools: {
       getWeather,
+      geocodeLocation,
     },
   });
 
   // send sources and reasoning back to the client
   return result.toUIMessageStreamResponse({
-    sendSources: true,
     sendReasoning: true,
   });
 }

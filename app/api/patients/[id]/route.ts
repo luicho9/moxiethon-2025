@@ -20,19 +20,19 @@ export async function GET(
     const mockChatHistory = [
       {
         id: "1",
-        message: "Good morning! I took my medication as scheduled.",
+        message: "Buenos días! Tomé mis medicamentos como se programó.",
         timestamp: "2024-01-20 08:30",
         type: "patient",
       },
       {
         id: "2",
-        message: "Feeling a bit tired today but overall good mood.",
+        message: "Me siento un poco cansado hoy pero en general buena onda.",
         timestamp: "2024-01-20 14:15",
         type: "patient",
       },
       {
         id: "3",
-        message: "Medication reminder: Time for evening dose",
+        message: "Recordatorio de medicamento: Hora de la dosis de la tarde",
         timestamp: "2024-01-20 18:00",
         type: "system",
       },

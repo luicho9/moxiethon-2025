@@ -1,12 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import {
-  Copy as CopyIcon,
-  GlobeIcon,
-  RefreshCcwIcon,
-  UserIcon,
-} from "lucide-react";
+import { CopyIcon, RefreshCcwIcon, UserIcon } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { Action, Actions } from "@/components/ai-elements/actions";
 import {
@@ -25,7 +20,6 @@ import {
   PromptInputAttachment,
   PromptInputAttachments,
   PromptInputBody,
-  PromptInputButton,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -50,6 +44,7 @@ import {
   SourcesTrigger,
 } from "@/components/ai-elements/sources";
 import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
+import VoiceAssistant from "@/components/voice-assistant";
 
 const models = [
   {
@@ -83,18 +78,16 @@ type Patient = {
 export default function Page() {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<string>(models[0].value);
-  const [webSearch, setWebSearch] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<string | null>(null);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoadingPatients, setIsLoadingPatients] = useState(true);
+
   const { messages, sendMessage, status, regenerate } = useChat();
 
-  // Default suggestions for the chat
   const defaultSuggestions = [
     "Recordemos una de mis memorias",
     "Juguemos un juego mental",
     "¿Qué medicamentos debo tomar?",
-    "¿Cómo esta el clima el día de hoy?",
   ];
 
   // Fetch patients on component mount
@@ -132,7 +125,6 @@ export default function Page() {
       {
         body: {
           model,
-          webSearch,
           patientId: selectedPatient,
         },
       }
@@ -152,7 +144,6 @@ export default function Page() {
       {
         body: {
           model,
-          webSearch,
           patientId: selectedPatient,
         },
       }
@@ -160,23 +151,26 @@ export default function Page() {
   };
 
   return (
-    <div className="relative mx-auto size-full h-screen max-w-4xl p-6">
+    <div className="relative mx-auto size-full h-screen max-w-4xl p-3 sm:p-6">
       <div className="flex h-full flex-col">
         {selectedPatientData && (
           <div className="mb-4 rounded-lg border bg-blue-50 p-3">
-            <div className="flex items-center gap-2">
-              <UserIcon className="h-4 w-4 text-blue-600" />
-              <span className="font-medium text-blue-900">
-                Paciente actual: {selectedPatientData.username}
-              </span>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="flex items-center gap-2">
+                <UserIcon className="h-4 w-4 shrink-0 text-blue-600" />
+                <span className="font-medium text-blue-900 text-sm sm:text-base">
+                  Paciente actual: {selectedPatientData.username}
+                </span>
+              </div>
               {selectedPatientData.status?.lastMood && (
-                <span className="text-blue-700 text-sm">
-                  (Recent mood: {selectedPatientData.status.lastMood})
+                <span className="text-blue-700 text-xs sm:text-sm">
+                  (Mood reciente: {selectedPatientData.status.lastMood})
                 </span>
               )}
             </div>
           </div>
         )}
+
         <Conversation className="h-full">
           <ConversationContent>
             {messages.map((message) => (
@@ -263,8 +257,8 @@ export default function Page() {
         </Conversation>
 
         {messages.length === 0 && (
-          <div className="mb-4">
-            <Suggestions className="justify-center">
+          <div className="mb-4 px-2">
+            <Suggestions>
               {defaultSuggestions.map((suggestion) => (
                 <Suggestion
                   key={suggestion}
@@ -292,83 +286,87 @@ export default function Page() {
             />
           </PromptInputBody>
           <PromptInputToolbar>
-            <PromptInputTools>
-              <PromptInputActionMenu>
-                <PromptInputActionMenuTrigger />
-                <PromptInputActionMenuContent>
-                  <PromptInputActionAddAttachments />
-                </PromptInputActionMenuContent>
-              </PromptInputActionMenu>
-              <PromptInputButton
-                onClick={() => setWebSearch(!webSearch)}
-                variant={webSearch ? "default" : "ghost"}
-              >
-                <GlobeIcon size={16} />
-                <span>Search</span>
-              </PromptInputButton>
-              <PromptInputModelSelect
-                onValueChange={(value) => {
-                  setSelectedPatient(value === "none" ? null : value);
-                }}
-                value={selectedPatient || "none"}
-              >
-                <PromptInputModelSelectTrigger>
-                  <UserIcon size={16} />
-                  <PromptInputModelSelectValue
-                    placeholder={
-                      isLoadingPatients ? "Loading..." : "Select Patient"
-                    }
-                  />
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent>
-                  <PromptInputModelSelectItem value="none">
-                    No Patient Selected
-                  </PromptInputModelSelectItem>
-                  {patients.map((patient) => (
-                    <PromptInputModelSelectItem
-                      key={patient.userId}
-                      value={patient.userId}
-                    >
-                      {patient.username}
-                      {patient.status?.medsSignal &&
-                        patient.status.medsSignal !== "unknown" && (
-                          <span
-                            className={`ml-2 text-xs ${
-                              patient.status.medsSignal === "took"
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
-                          >
-                            ({patient.status.medsSignal === "took" ? "✓" : "⚠"})
-                          </span>
-                        )}
+            <div className="flex w-full flex-wrap items-center gap-2">
+              <PromptInputTools>
+                <PromptInputActionMenu>
+                  <PromptInputActionMenuTrigger />
+                  <PromptInputActionMenuContent>
+                    <PromptInputActionAddAttachments />
+                  </PromptInputActionMenuContent>
+                </PromptInputActionMenu>
+                <VoiceAssistant />
+              </PromptInputTools>
+
+              <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row">
+                <PromptInputModelSelect
+                  onValueChange={(value) => {
+                    setSelectedPatient(value === "none" ? null : value);
+                  }}
+                  value={selectedPatient || "none"}
+                >
+                  <PromptInputModelSelectTrigger>
+                    <UserIcon size={16} />
+                    <PromptInputModelSelectValue
+                      placeholder={
+                        isLoadingPatients
+                          ? "Cargando..."
+                          : "Seleccionar paciente"
+                      }
+                    />
+                  </PromptInputModelSelectTrigger>
+                  <PromptInputModelSelectContent>
+                    <PromptInputModelSelectItem value="none">
+                      No hay paciente seleccionado
                     </PromptInputModelSelectItem>
-                  ))}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
-              <PromptInputModelSelect
-                onValueChange={(value) => {
-                  setModel(value);
-                }}
-                value={model}
-              >
-                <PromptInputModelSelectTrigger>
-                  <PromptInputModelSelectValue />
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent>
-                  {/** biome-ignore lint/nursery/noShadow: models variable is intentionally shadowed in map callback */}
-                  {models.map((model) => (
-                    <PromptInputModelSelectItem
-                      key={model.value}
-                      value={model.value}
-                    >
-                      {model.name}
-                    </PromptInputModelSelectItem>
-                  ))}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
-            </PromptInputTools>
-            <PromptInputSubmit disabled={!(input || status)} status={status} />
+                    {patients.map((patient) => (
+                      <PromptInputModelSelectItem
+                        key={patient.userId}
+                        value={patient.userId}
+                      >
+                        {patient.username}
+                        {patient.status?.medsSignal &&
+                          patient.status.medsSignal !== "unknown" && (
+                            <span
+                              className={`ml-2 text-xs ${
+                                patient.status.medsSignal === "took"
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              (
+                              {patient.status.medsSignal === "took" ? "✓" : "⚠"}
+                              )
+                            </span>
+                          )}
+                      </PromptInputModelSelectItem>
+                    ))}
+                  </PromptInputModelSelectContent>
+                </PromptInputModelSelect>
+
+                <PromptInputModelSelect
+                  onValueChange={(value) => {
+                    setModel(value);
+                  }}
+                  value={model}
+                >
+                  <PromptInputModelSelectTrigger>
+                    <PromptInputModelSelectValue />
+                  </PromptInputModelSelectTrigger>
+                  <PromptInputModelSelectContent>
+                    {models.map((m) => (
+                      <PromptInputModelSelectItem key={m.value} value={m.value}>
+                        {m.name}
+                      </PromptInputModelSelectItem>
+                    ))}
+                  </PromptInputModelSelectContent>
+                </PromptInputModelSelect>
+              </div>
+
+              <PromptInputSubmit
+                disabled={!(input || status)}
+                status={status}
+              />
+            </div>
           </PromptInputToolbar>
         </PromptInput>
       </div>

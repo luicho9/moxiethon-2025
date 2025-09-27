@@ -103,19 +103,21 @@ export default function Page() {
         const mockChatHistory: ChatMessage[] = [
           {
             id: "1",
-            message: "Good morning! I took my medication as scheduled.",
+            message: "Buenos días! Tomé mis medicamentos como se programó.",
             timestamp: "2024-01-20 08:30",
             type: "patient",
           },
           {
             id: "2",
-            message: "Feeling a bit tired today but overall good mood.",
+            message:
+              "Me siento un poco cansado hoy pero en general buena onda.",
             timestamp: "2024-01-20 14:15",
             type: "patient",
           },
           {
             id: "3",
-            message: "Medication reminder: Time for evening dose",
+            message:
+              "Recordatorio de medicamento: Hora de la dosis de la tarde",
             timestamp: "2024-01-20 18:00",
             type: "system",
           },
@@ -187,23 +189,14 @@ export default function Page() {
     }
   };
 
-  const getMedsSignalColor = (signal: "took" | "skipped" | "unknown") => {
-    switch (signal) {
-      case "took":
-        return "bg-green-100 text-green-800";
-      case "skipped":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
-          <p className="text-muted-foreground">Loading patient profile...</p>
+          <p className="text-muted-foreground">
+            Cargando perfil del paciente...
+          </p>
         </div>
       </div>
     );
@@ -213,13 +206,11 @@ export default function Page() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <h2 className="mb-2 font-bold text-2xl">Patient Not Found</h2>
+          <h2 className="mb-2 font-bold text-2xl">Paciente no encontrado</h2>
           <p className="mb-4 text-muted-foreground">
-            The requested patient profile could not be found.
+            El perfil del paciente no pudo ser encontrado.
           </p>
-          <Button onClick={() => router.push("/dashboard")}>
-            Return to Dashboard
-          </Button>
+          <Button onClick={() => router.push("/dashboard")}>Regresar</Button>
         </div>
       </div>
     );
@@ -241,7 +232,7 @@ export default function Page() {
                 Regresar
               </Button>
               <div>
-                <h1 className="font-semibold text-xl">Patient Details</h1>
+                <h1 className="font-semibold text-xl">Detalles del paciente</h1>
                 <p className="text-muted-foreground text-sm">
                   {patient.name} (@{patient.username})
                 </p>
@@ -251,7 +242,7 @@ export default function Page() {
             <div className="flex items-center space-x-2">
               {patient.lastActive && (
                 <Badge variant="outline">
-                  Last active: {patient.lastActive}
+                  Último activo: {patient.lastActive}
                 </Badge>
               )}
               {patient.mood && (
@@ -265,12 +256,7 @@ export default function Page() {
                         : "bg-yellow-100 text-yellow-800"
                   }
                 >
-                  Mood: {patient.mood}
-                </Badge>
-              )}
-              {patient.medsSignal && (
-                <Badge className={getMedsSignalColor(patient.medsSignal)}>
-                  Meds: {patient.medsSignal}
+                  Estado: {patient.mood}
                 </Badge>
               )}
             </div>
@@ -288,19 +274,19 @@ export default function Page() {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">
               <User className="mr-2 h-4 w-4" />
-              Overview
+              Resumen
             </TabsTrigger>
             <TabsTrigger value="edit">
               <Save className="mr-2 h-4 w-4" />
-              Edit Profile
+              Editar perfil
             </TabsTrigger>
             <TabsTrigger value="chat">
               <MessageCircle className="mr-2 h-4 w-4" />
-              Chat History
+              Historial de chat
             </TabsTrigger>
             <TabsTrigger value="activity">
               <Activity className="mr-2 h-4 w-4" />
-              Activity
+              Actividad
             </TabsTrigger>
           </TabsList>
 
@@ -309,19 +295,19 @@ export default function Page() {
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Medical Information</CardTitle>
+                  <CardTitle>Información médica</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label className="font-medium">Medical Conditions</Label>
+                    <Label className="font-medium">Condiciones médicas</Label>
                     <p className="mt-1 text-muted-foreground text-sm">
-                      {patient.diseases || "No conditions recorded"}
+                      {patient.diseases || "No condiciones registradas"}
                     </p>
                   </div>
                   <div>
-                    <Label className="font-medium">Current Medications</Label>
+                    <Label className="font-medium">Medicamentos</Label>
                     <p className="mt-1 text-muted-foreground text-sm">
-                      {patient.medications || "No medications recorded"}
+                      {patient.medications || "No medicamentos registrados"}
                     </p>
                   </div>
                 </CardContent>
@@ -329,25 +315,27 @@ export default function Page() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
+                  <CardTitle>Información personal</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label className="font-medium">Religion/Beliefs</Label>
+                    <Label className="font-medium">Religión/Creencias</Label>
                     <p className="mt-1 text-muted-foreground text-sm">
-                      {patient.religion || "Not specified"}
+                      {patient.religion || "No especificado"}
                     </p>
                   </div>
                   <div>
-                    <Label className="font-medium">Family</Label>
+                    <Label className="font-medium">Familia</Label>
                     <p className="mt-1 text-muted-foreground text-sm">
-                      {patient.family || "No family information"}
+                      {patient.family || "No información familiar"}
                     </p>
                   </div>
                   <div>
-                    <Label className="font-medium">Emergency Contact</Label>
+                    <Label className="font-medium">
+                      Contacto de emergencia
+                    </Label>
                     <p className="mt-1 text-muted-foreground text-sm">
-                      {patient.emergencyContact || "No emergency contact"}
+                      {patient.emergencyContact || "No contacto de emergencia"}
                     </p>
                   </div>
                 </CardContent>
@@ -355,21 +343,19 @@ export default function Page() {
 
               <Card className="md:col-span-2">
                 <CardHeader>
-                  <CardTitle>Preferences & Notes</CardTitle>
+                  <CardTitle>Preferencias y notas</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label className="font-medium">
-                      Preferences & Interests
-                    </Label>
+                    <Label className="font-medium">Preferencias y notas</Label>
                     <p className="mt-1 text-muted-foreground text-sm">
-                      {patient.preferences || "No preferences recorded"}
+                      {patient.preferences || "No preferencias registradas"}
                     </p>
                   </div>
                   <div>
-                    <Label className="font-medium">Additional Notes</Label>
+                    <Label className="font-medium">Notas adicionales</Label>
                     <p className="mt-1 text-muted-foreground text-sm">
-                      {patient.notes || "No additional notes"}
+                      {patient.notes || "No notas adicionales"}
                     </p>
                   </div>
                 </CardContent>
@@ -385,16 +371,17 @@ export default function Page() {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <User className="mr-2 h-5 w-5" />
-                    Basic Information
+                    Información básica
                   </CardTitle>
                   <CardDescription>
-                    Update the patient's basic details and medical information
+                    Actualiza la información básica del paciente y la
+                    información médica
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name *</Label>
+                      <Label htmlFor="name">Nombre completo *</Label>
                       <Input
                         id="name"
                         onChange={(e) =>
@@ -409,7 +396,7 @@ export default function Page() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
+                      <Label htmlFor="username">Nombre de usuario</Label>
                       <Input
                         className="bg-muted"
                         disabled
@@ -417,13 +404,13 @@ export default function Page() {
                         value={formData.username || ""}
                       />
                       <p className="text-muted-foreground text-xs">
-                        Username cannot be changed
+                        El nombre de usuario no puede ser modificado
                       </p>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="diseases">Medical Conditions</Label>
+                    <Label htmlFor="diseases">Condiciones médicas</Label>
                     <Textarea
                       id="diseases"
                       onChange={(e) =>
@@ -438,7 +425,7 @@ export default function Page() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="medications">Current Medications</Label>
+                    <Label htmlFor="medications">Medicamentos actuales</Label>
                     <Textarea
                       id="medications"
                       onChange={(e) =>
@@ -457,12 +444,12 @@ export default function Page() {
               {/* Personal Information */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Personal & Cultural Information</CardTitle>
+                  <CardTitle>Información personal y cultural</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="religion">Religion/Beliefs</Label>
+                      <Label htmlFor="religion">Religión/Creencias</Label>
                       <Input
                         id="religion"
                         onChange={(e) =>
@@ -477,7 +464,7 @@ export default function Page() {
 
                     <div className="space-y-2">
                       <Label htmlFor="emergencyContact">
-                        Emergency Contact
+                        Contacto de emergencia
                       </Label>
                       <Input
                         id="emergencyContact"
@@ -493,7 +480,7 @@ export default function Page() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="family">Family Information</Label>
+                    <Label htmlFor="family">Información familiar</Label>
                     <Textarea
                       id="family"
                       onChange={(e) =>
@@ -508,7 +495,9 @@ export default function Page() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="preferences">Preferences & Interests</Label>
+                    <Label htmlFor="preferences">
+                      Preferencias y intereses
+                    </Label>
                     <Textarea
                       id="preferences"
                       onChange={(e) =>
@@ -523,7 +512,7 @@ export default function Page() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="notes">Additional Notes</Label>
+                    <Label htmlFor="notes">Notas adicionales</Label>
                     <Textarea
                       id="notes"
                       onChange={(e) =>
@@ -559,7 +548,7 @@ export default function Page() {
                   variant="destructive"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete Patient
+                  Eliminar paciente
                 </Button>
 
                 <div className="flex space-x-4">
@@ -568,18 +557,18 @@ export default function Page() {
                     type="button"
                     variant="outline"
                   >
-                    Cancel
+                    Cancelar
                   </Button>
                   <Button disabled={isSaving} type="submit">
                     {isSaving ? (
                       <>
                         <Save className="mr-2 h-4 w-4 animate-spin" />
-                        Saving...
+                        Guardando...
                       </>
                     ) : (
                       <>
                         <Save className="mr-2 h-4 w-4" />
-                        Save Changes
+                        Guardar cambios
                       </>
                     )}
                   </Button>
@@ -592,16 +581,16 @@ export default function Page() {
           <TabsContent value="chat">
             <Card>
               <CardHeader>
-                <CardTitle>Chat History</CardTitle>
+                <CardTitle>Historial de chat</CardTitle>
                 <CardDescription>
-                  Recent conversations and interactions with {patient.name}
+                  Conversaciones y interacciones recientes con {patient.name}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="max-h-96 space-y-4 overflow-y-auto">
                   {chatHistory.length === 0 ? (
                     <p className="py-8 text-center text-muted-foreground">
-                      No chat history available
+                      No hay historial de chat disponible
                     </p>
                   ) : (
                     chatHistory.map((message) => (
@@ -621,7 +610,9 @@ export default function Page() {
                                 : "secondary"
                             }
                           >
-                            {message.type === "patient" ? "Patient" : "System"}
+                            {message.type === "patient"
+                              ? "Paciente"
+                              : "Sistema"}
                           </Badge>
                           <span className="text-muted-foreground text-xs">
                             {message.timestamp}
@@ -640,9 +631,9 @@ export default function Page() {
           <TabsContent value="activity">
             <Card>
               <CardHeader>
-                <CardTitle>Activity Timeline</CardTitle>
+                <CardTitle>Cronología de actividad</CardTitle>
                 <CardDescription>
-                  Patient activity and engagement history
+                  Actividad y historial de interacción del paciente
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -650,26 +641,28 @@ export default function Page() {
                   <div className="flex items-center space-x-3 rounded-lg bg-green-50 p-3">
                     <Calendar className="h-5 w-5 text-green-600" />
                     <div>
-                      <p className="font-medium text-sm">Medication Taken</p>
+                      <p className="font-medium text-sm">Medicamento tomado</p>
                       <p className="text-muted-foreground text-xs">
-                        2 hours ago
+                        2 horas atrás
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3 rounded-lg bg-blue-50 p-3">
                     <MessageCircle className="h-5 w-5 text-blue-600" />
                     <div>
-                      <p className="font-medium text-sm">Chat Interaction</p>
+                      <p className="font-medium text-sm">Interacción de chat</p>
                       <p className="text-muted-foreground text-xs">
-                        4 hours ago
+                        4 horas atrás
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3 rounded-lg bg-gray-50 p-3">
                     <Activity className="h-5 w-5 text-gray-600" />
                     <div>
-                      <p className="font-medium text-sm">Profile Updated</p>
-                      <p className="text-muted-foreground text-xs">1 day ago</p>
+                      <p className="font-medium text-sm">Perfil actualizado</p>
+                      <p className="text-muted-foreground text-xs">
+                        1 día atrás
+                      </p>
                     </div>
                   </div>
                 </div>

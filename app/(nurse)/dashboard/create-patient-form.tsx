@@ -35,30 +35,6 @@ export function CreatePatientForm() {
         <h2 className="font-semibold text-2xl">Nuevo paciente</h2>
       </div>
 
-      {showCredentials && (
-        <div className="rounded-lg border border-green-200 bg-green-50 p-4">
-          <h3 className="mb-2 font-medium text-green-800">Perfil de creado!</h3>
-          <p className="mb-2 text-green-700 text-sm">
-            Por favor, proporciona estas credenciales al paciente:
-          </p>
-          <div className="rounded border bg-white p-3 font-mono text-sm">
-            <div>
-              Usuario: <strong>{showCredentials.username}</strong>
-            </div>
-            <div>
-              PIN: <strong>{showCredentials.pin}</strong>
-            </div>
-          </div>
-          <button
-            className="mt-3 text-green-600 text-sm hover:text-green-800"
-            onClick={() => setShowCredentials(null)}
-            type="button"
-          >
-            Crear otro perfil de paciente
-          </button>
-        </div>
-      )}
-
       {!showCredentials && (
         <Form action={formAction} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

@@ -33,12 +33,7 @@ function PatientList({ patients }: PatientListProps) {
                   {patient.lastMood && (
                     <div>Último estado: {patient.lastMood}</div>
                   )}
-                  <div>
-                    Meds:{" "}
-                    <span className={getMedsSignalClass(patient.medsSignal)}>
-                      {patient.medsSignal}
-                    </span>
-                  </div>
+
                   {patient.lastActiveAt && (
                     <div>
                       Último activo:{" "}
@@ -58,17 +53,6 @@ function PatientList({ patients }: PatientListProps) {
       </div>
     </div>
   );
-}
-
-function getMedsSignalClass(signal: "took" | "skipped" | "unknown"): string {
-  switch (signal) {
-    case "took":
-      return "rounded bg-green-100 px-2 py-1 text-xs text-green-800";
-    case "skipped":
-      return "rounded bg-red-100 px-2 py-1 text-xs text-red-800";
-    default:
-      return "rounded bg-gray-100 px-2 py-1 text-xs text-gray-800";
-  }
 }
 
 async function DashboardContent() {

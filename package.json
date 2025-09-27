@@ -10,6 +10,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@ai-sdk/elevenlabs": "^1.0.12",
     "@ai-sdk/openai": "^2.0.37",
     "@ai-sdk/react": "^2.0.55",
     "@radix-ui/react-avatar": "^1.1.10",
