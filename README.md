@@ -97,3 +97,7 @@ Esto significa:
 ## URL del Demo
 
 [https://moxiethon-2025.vercel.app/](https://moxiethon-2025.vercel.app/)
+
+## URL de la presentación
+
+[https://presentacion-moxiethon-2025.vercel.app/](https://presentacion-moxiethon-2025.vercel.app/)
