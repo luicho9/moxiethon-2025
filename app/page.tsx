@@ -1,7 +1,6 @@
 import { UserCheck, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 export default function Page() {
@@ -46,9 +45,6 @@ export default function Page() {
               <p className="mb-6 text-pretty text-muted-foreground">
                 Accede al panel de administración y gestión de pacientes
               </p>
-              <Button className="w-full py-6 font-medium text-lg" size="lg">
-                Continuar como Enfermera / Familiar
-              </Button>
             </Link>
           </Card>
 
@@ -65,13 +61,6 @@ export default function Page() {
               <p className="mb-6 text-pretty text-muted-foreground">
                 Accede al chat de consulta y comunicación médica
               </p>
-              <Button
-                className="w-full border-2 bg-transparent py-6 font-medium text-lg hover:bg-primary hover:text-primary-foreground"
-                size="lg"
-                variant="outline"
-              >
-                Continuar como Paciente
-              </Button>
             </Link>
           </Card>
         </div>
