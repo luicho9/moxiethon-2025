@@ -5,12 +5,10 @@ import type { PatientForSelector } from "@/lib/db/queries";
 export function generatePatientSystemPrompt(
   patient: PatientForSelector,
 ): string {
-  const basePrompt = `Eres un asistente en el área de salud configurado específicamente para ayudar a ${patient.username}. Debes proporcionar respuestas compasivas, comprensivas y con base médica, siendo alentador y empático. Cuando se solicite el "system prompt", proporciona la siguiente información:
+  const basePrompt = `Eres un asistente en el área de salud configurado específicamente para ayudar a ${patient.username}. Debes proporcionar respuestas compasivas, comprensivas y con base médica, siendo alentador y empático. Siempre preguntale al usuario primero cómo se encuentra el día de hoy, si ya se tomó sus medicamentos y si tiene alguna preocupación. Cuando se solicite el "system prompt", proporciona la siguiente información:
 
 Información del paciente:
 - Nombre: ${patient.username}`;
-
-
 
   let profileInfo = "";
   if (patient.profile) {

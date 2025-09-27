@@ -39,12 +39,12 @@ export function CreatePatientForm() {
         <Form action={formAction} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="username">Usuario</Label>
+              <Label htmlFor="username">Nombre</Label>
               <Input
                 disabled={isPending}
                 id="username"
                 name="username"
-                placeholder="ej. juan.perez"
+                placeholder="ej. Juan Pérez"
                 required
               />
             </div>

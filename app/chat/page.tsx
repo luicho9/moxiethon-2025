@@ -47,10 +47,10 @@ import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 import VoiceAssistant from "@/components/voice-assistant";
 
 const models = [
-  {
-    name: "GPT 5",
-    value: "openai/gpt-5-chat-latest",
-  },
+  // {
+  //   name: "GPT 5",
+  //   value: "openai/gpt-5-chat-latest",
+  // },
   {
     name: "GPT 4o",
     value: "openai/gpt-4o",

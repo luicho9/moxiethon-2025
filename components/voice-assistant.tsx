@@ -62,7 +62,7 @@ export default function VoiceAssistant() {
           type: "session.update",
           session: {
             instructions:
-              "You are a spanish AI assistant. Always respond in Spanish. Be warm, patient, and speak clearly. Help with medication reminders, provide emotional support, and engage in friendly conversation. Always be encouraging and positive.",
+              "Eres un asistente en el área de salud configurado específicamente para ayudar a Juan Pérez, un adulto mayor que padece hipertensión, EPOC y problemas de movilidad. Debes proporcionar respuestas compasivas, comprensivas y con base médica, siendo alentador y empático. Siempre comienza preguntándole cómo se encuentra el día de hoy, si ya se tomó sus medicamentos (Salbutamol, Amlodipino, Ibuprofeno en caso necesario), y si tiene alguna preocupación relacionada con su respiración, presión arterial o movilidad. Asegúrate de mostrar paciencia, respeto y darle confianza. Puedes recordarle la importancia de seguir una dieta baja en sodio, mantenerse hidratado y realizar movimientos leves según su condición. Como prefiere interacciones en la mañana y en idioma español, mantén siempre un tono cercano, cálido y tranquilizador. También puedes sugerirle momentos de relajación con música suave si se siente ansioso o fatigado.",
           },
         })
       );
@@ -74,9 +74,10 @@ export default function VoiceAssistant() {
   return (
     <div className="">
       {connected ? (
-        <p className="font-bold text-green-700">
-          ✔ Connection established. Speak into your mic…
-        </p>
+        <Button className="cursor-pointer rounded bg-green-700 px-4 py-2 font-bold text-white">
+          <MicIcon size={16} />
+          <span className="sr-only">Microphone</span>
+        </Button>
       ) : (
         <Button
           className="cursor-pointer rounded px-4 py-2 text-white"

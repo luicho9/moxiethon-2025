@@ -63,10 +63,18 @@ async function DashboardContent() {
   return (
     <div className="mx-auto max-w-4xl space-y-8 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-bold text-3xl">Panel de control de enfermera</h1>
-        <div className="text-gray-600 text-sm">
-          Bienvenido de nuevo! Tienes {patients.length} pacientes.
-        </div>
+        <h1 className="font-bold text-3xl">
+          Panel de control de enfermera / familiar
+        </h1>
+        <Link
+          href="https://moxiethon-ml-demo-1.streamlit.app/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <Button className="text-gray-600 text-sm" variant="outline">
+            Análisis de datos
+          </Button>
+        </Link>
       </div>
 
       <CreatePatientForm />

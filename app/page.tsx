@@ -41,13 +41,13 @@ export default function Page() {
                 </div>
               </div>
               <h2 className="mb-3 font-semibold text-2xl text-foreground">
-                Enfermera
+                Enfermera / Familiar
               </h2>
               <p className="mb-6 text-pretty text-muted-foreground">
                 Accede al panel de administración y gestión de pacientes
               </p>
               <Button className="w-full py-6 font-medium text-lg" size="lg">
-                Continuar como Enfermera
+                Continuar como Enfermera / Familiar
               </Button>
             </Link>
           </Card>
